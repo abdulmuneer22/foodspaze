@@ -14,10 +14,7 @@ export class Profile extends Component {
     this.state = {
       cusine: "All",
       showmodal: false,
-      dishList: [
-        ...this.props.navigation.state.params.menu_list[0]["Veg"],
-        ...this.props.navigation.state.params.menu_list[0]["nonVeg"]
-      ]
+      dishList: []
     };
   }
   changeCusine = type => {
@@ -46,6 +43,18 @@ export class Profile extends Component {
     }
   };
 
+  componentWillMount() {
+    const { menu_list } = this.props.navigation.state.params;
+
+    if (menu_list && menu_list[0]) {
+      var veg = menu_list[0]["Veg"] || [];
+      var nVeg = menu_list[0]["nonVeg"] || [];
+      this.setState({
+        dishList: [...veg, ...nVeg]
+      });
+    }
+  }
+
   render() {
     const {
       name,
@@ -63,7 +72,10 @@ export class Profile extends Component {
         }}
       >
         <Header navigation={this.props.navigation} />
-        <Tags cusine={cusine} onChange={this.changeCusine} />
+
+        {dishList && dishList.length > 0 ? (
+          <Tags cusine={cusine} onChange={this.changeCusine} />
+        ) : null}
 
         <Text
           style={{

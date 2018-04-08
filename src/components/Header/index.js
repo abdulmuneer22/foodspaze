@@ -21,10 +21,10 @@ const Menu = ({ navigate, state, pop }) => (
     />
   </TouchableOpacity>
 );
-const Search = () => (
-  <View>
+const Search = ({ onSearchTap }) => (
+  <TouchableOpacity onPress={onSearchTap}>
     <Icon name="ios-search-outline" size={20} color="white" />
-  </View>
+  </TouchableOpacity>
 );
 
 const Title = () => (
@@ -46,11 +46,11 @@ const Title = () => (
   </View>
 );
 
-const Header = ({ navigation }) => (
+const Header = ({ navigation, onSearchTap }) => (
   <View style={Theme.header_wrapper}>
     <Menu {...navigation} />
     <Title />
-    <Search />
+    <Search onSearchTap={onSearchTap} />
   </View>
 );
 

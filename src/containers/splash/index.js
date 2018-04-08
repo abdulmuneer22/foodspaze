@@ -1,34 +1,37 @@
 import React, { Component } from "react";
-import { Text, View } from "react-native";
+import { Text, View, Platform } from "react-native";
 import Theme from "../../styles";
 import { connect } from "react-redux";
 import { updateUserLocation } from "../../redux/actions";
+import Permissions from "react-native-permissions";
 
 export class SplashScreen extends Component {
-  getUserLocation = () => {
-    navigator.geolocation.getCurrentPosition(
-      position => {
-        this.props.updateLocation(position);
-      },
-      error => {
-        alert(JSON.stringify(error));
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 20000,
-        maximumAge: 1000
-      }
-    );
-  };
-
   componentDidMount() {
     const { navigation } = this.props;
 
-    this.getUserLocation();
-
-    setTimeout(() => {
-      navigation.navigate("DrawerNavigation");
-    }, 2000);
+    if (Platform.OS !== "ios") {
+      Permissions.check("location").then(response => {
+        // Response is one of: 'authorized', 'denied', 'restricted', or 'undetermined'
+        console.log("Location permi", response);
+        if (response === "authorized") {
+          navigator.geolocation.getCurrentPosition(
+            pos => {
+              console.log("Position", pos);
+              this.props.updateLocation(pos);
+              setTimeout(() => {
+                navigation.navigate("DrawerNavigation");
+              }, 2000);
+            },
+            err => {
+              console.log("Position err", err);
+            },
+            { enableHighAccuracy: false, timeout: 20000, maximumAge: 1000 }
+          );
+        }
+      });
+    } else {
+      this.getUserLocation();
+    }
   }
 
   render() {

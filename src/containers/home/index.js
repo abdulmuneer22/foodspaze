@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, ActivityIndicator } from "react-native";
+import { Text, View, ActivityIndicator, Modal } from "react-native";
 
 import { connect } from "react-redux";
 
@@ -10,20 +10,42 @@ import Tags from "../../components/Tags";
 import { getResList } from "../../redux/actions";
 
 export class Home extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      userLocation: "",
+      showModal: false
+    };
+  }
+
   componentDidMount() {
     const { getAll } = this.props;
     getAll();
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps !== this.props) {
+      if (nextProps.UserLocation) {
+        this.setState({
+          userLocation: nextProps.UserLocation
+        });
+      }
+    }
+  }
+
   render() {
     const { RestaurantList } = this.props;
+    const { userLocation } = this.state;
     return (
       <View
         style={{
           flex: 1
         }}
       >
-        <Header navigation={this.props.navigation} />
+        <Header
+          navigation={this.props.navigation}
+          onSearchTap={() => this.setState({ showModal: true })}
+        />
         <View
           style={{
             flex: 1,
@@ -32,7 +54,7 @@ export class Home extends Component {
           }}
         >
           {RestaurantList && RestaurantList.length > 0 ? (
-            <List {...this.props} UserLocation={this.props.UserLocation} />
+            <List {...this.props} UserLocation={userLocation} />
           ) : (
             <ActivityIndicator size="large" />
           )}

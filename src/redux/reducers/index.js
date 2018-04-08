@@ -21,6 +21,26 @@ const restaurantList = (state = InitialState, action) => {
   }
 };
 
+const searchResult = (state = [], action) => {
+  switch (action.type) {
+    case "SEARCH_RESTAURENT":
+      var mathes = [];
+      var key = action.payload.key;
+      var list = action.payload.list;
+
+      list.forEach(itm => {
+        if (itm.name.search(key) > 0) {
+          mathes.push(itm);
+        }
+      });
+
+      return mathes;
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   restaurantList,
   userLocation
